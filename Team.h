@@ -5,7 +5,7 @@
 #include "FormationStrategy.h"
 using namespace std;
 
-// Generic repository template for storing any type
+// Generic repository template
 template <typename T>
 class Repository
 {
@@ -18,13 +18,20 @@ public:
     int size() const { return items.size(); }
 };
 
+// Stores a full team lineup snapshot
+struct LineupSnapshot
+{
+    string formation;
+    vector<string> playerNames;
+};
+
 class Team
 {
 private:
     vector<Player *> players;
     FormationStrategy *strategy;
     string teamName;
-    Repository<string> formationHistory;
+    Repository<LineupSnapshot> lineupHistory;
 
 public:
     Team(string name);
@@ -34,8 +41,13 @@ public:
     void displayTeam() const;
     void setStrategy(FormationStrategy *s);
     void applyStrategy() const;
+    void saveLineup();
+    void displayLineupHistory() const;
 
     // Search and sort
     void bubbleSort();
     int linearSearch(string name) const;
+
+    int getTeamSize() const;
+    string getFormationName() const;
 };
