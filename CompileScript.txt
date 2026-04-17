@@ -1,0 +1,3 @@
+g++ -std=c++11 main.cpp Team.cpp Squad.cpp -o simulator
+
+./simulator
