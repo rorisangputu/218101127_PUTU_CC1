@@ -4,13 +4,7 @@ using namespace std;
 
 Team::Team(string name) : teamName(name), strategy(nullptr) {}
 
-Team::~Team()
-{
-    for (Player *p : players)
-    {
-        delete p;
-    }
-}
+Team::~Team() {}
 
 void Team::addPlayer(Player *p)
 {
@@ -19,14 +13,14 @@ void Team::addPlayer(Player *p)
         throw runtime_error("Cannot add more than 11 players to a team.");
     }
     players.push_back(p);
-    cout << p->getName() << " added to the team." << endl;
+    cout << p->getName() << " added to team." << endl;
 }
 
 void Team::displayTeam() const
 {
     if (players.empty())
     {
-        cout << "No players in the team." << endl;
+        cout << "No players in team." << endl;
         return;
     }
     cout << "\n=== " << teamName << " ===" << endl;
@@ -34,25 +28,17 @@ void Team::displayTeam() const
     {
         cout << "Formation: " << strategy->getName() << endl;
     }
-    cout << "Players:" << endl;
     for (Player *p : players)
     {
         p->display();
     }
     cout << "Total players: " << players.size() << endl;
-
-    cout << "\nFormation History:" << endl;
-    for (int i = 0; i < formationHistory.size(); i++)
-    {
-        cout << i + 1 << ". " << formationHistory.get(i) << endl;
-    }
 }
 
 void Team::setStrategy(FormationStrategy *s)
 {
     strategy = s;
-    formationHistory.add(s->getName());
-    cout << "Strategy updated." << endl;
+    cout << "Formation set to " << s->getName() << endl;
 }
 
 void Team::applyStrategy() const
@@ -64,7 +50,41 @@ void Team::applyStrategy() const
     strategy->apply();
 }
 
-// Bubble sort - sorts players by skill (ascending)
+void Team::saveLineup()
+{
+    if (players.empty())
+    {
+        cout << "No players in team to save." << endl;
+        return;
+    }
+    LineupSnapshot snapshot;
+    snapshot.formation = strategy ? strategy->getName() : "None";
+    for (Player *p : players)
+    {
+        snapshot.playerNames.push_back(p->getName());
+    }
+    lineupHistory.add(snapshot);
+    cout << "Lineup saved." << endl;
+}
+
+void Team::displayLineupHistory() const
+{
+    if (lineupHistory.size() == 0)
+    {
+        cout << "No lineups saved yet." << endl;
+        return;
+    }
+    for (int i = 0; i < lineupHistory.size(); i++)
+    {
+        LineupSnapshot s = lineupHistory.get(i);
+        cout << "\nLineup " << i + 1 << " | Formation: " << s.formation << endl;
+        for (int j = 0; j < s.playerNames.size(); j++)
+        {
+            cout << "  " << j + 1 << ". " << s.playerNames[j] << endl;
+        }
+    }
+}
+
 void Team::bubbleSort()
 {
     int n = players.size();
@@ -83,7 +103,6 @@ void Team::bubbleSort()
     cout << "Players sorted by skill (ascending)." << endl;
 }
 
-// Linear search - finds player by name, returns index or -1
 int Team::linearSearch(string name) const
 {
     for (int i = 0; i < players.size(); i++)
@@ -94,4 +113,14 @@ int Team::linearSearch(string name) const
         }
     }
     return -1;
+}
+
+int Team::getTeamSize() const
+{
+    return players.size();
+}
+
+string Team::getFormationName() const
+{
+    return strategy ? strategy->getName() : "None";
 }
